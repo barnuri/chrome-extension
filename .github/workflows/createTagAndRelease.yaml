@@ -40,21 +40,6 @@ jobs:
           echo "newTagName=$newTag" >> $GITHUB_ENV
           echo "::set-output name=tagName::$newTag"
                
-      - name: Create Tag & Release
-        uses: actions/github-script@v6
-        # https://docs.github.com/en/rest/reference/releases#create-a-release
-        # https://octokit.github.io/rest.js/v19
-        with:
-          script: |
-            console.log("newTagName=${{ env.newTagName }}")
-            github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: "${{ env.newTagName }}",
-              name: "${{ env.newTagName }}",
-              body: "Version ${{ env.newTagName }}",
-              target_commitish: context.sha
-            });
       - name: Install GitHub CLI
         run: |
           curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
@@ -63,6 +48,7 @@ jobs:
             && sudo apt update \
             && sudo apt install gh -y
           gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
-      - name: Upload Zip Artifact To Release
+      - name: Create Tag & Release & Upload Zip Artifact To Release
         run: |
+          gh release create "${{ env.newTagName }}" --title "${{ env.newTagName }}" "Version ${{ env.newTagName }}" --latest --target github.sha
           gh release upload ${{env.newTagName}} ./extension.zip --clobber          
