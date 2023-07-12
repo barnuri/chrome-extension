@@ -65,8 +65,13 @@ jobs:
 #           asset_name: extension.zip
 #           asset_content_type: application/zip
         run: |
-          curl -v -include --fail-with-body \
-            -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            --form file=@extension.zip \
+          curl -X POST --fail-with-body  \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/octet-stream" \
+              --data-binary @extension.zip \
             https://uploads.github.com/repos/${{github.repository_owner}}/${{github.repository}}/releases/${{env.newTagName}}/assets?name=extension.zip
+#           curl -v -include --fail-with-body \
+#             -X POST \
+#             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+#             --form file=@extension.zip \
+#             https://uploads.github.com/repos/${{github.repository_owner}}/${{github.repository}}/releases/${{env.newTagName}}/assets?name=extension.zip
