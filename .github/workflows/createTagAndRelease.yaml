@@ -19,10 +19,9 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: mkdir -p ./build
-      - run: npm install
+      - run: npm i
       - run: npm run build
-      - run: zip -r extension.zip ./build
+      - run: zip -r extension.zip ./extension
 
       - name: Set Tag Name
         id: setTag
