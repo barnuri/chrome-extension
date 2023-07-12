@@ -50,5 +50,5 @@ jobs:
           gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
       - name: Create Tag & Release & Upload Zip Artifact To Release
         run: |
-          gh release create "${{ env.newTagName }}" --title "${{ env.newTagName }}" "Version ${{ env.newTagName }}" --latest --target github.sha
+          gh release create "${{ env.newTagName }}" --title "${{ env.newTagName }}" --notes "Version ${{ env.newTagName }}" --latest --target github.sha
           gh release upload ${{env.newTagName}} ./extension.zip --clobber          
