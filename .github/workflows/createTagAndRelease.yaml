@@ -56,9 +56,11 @@ jobs:
               target_commitish: context.sha
             });
       - name: Upload Zip Artifact To Release
-        run: |
-          curl -v --fail-with-body \
-            -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -F "extension=@extension.zip" \
-            https://uploads.github.com/repos/${{github.repository_owner}}/${{github.repository}}/releases/${{env.newTagName}}/assets?name=extension.zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: https://uploads.github.com/repos/${{github.repository_owner}}/${{github.repository}}/releases/${{env.newTagName}}
+          asset_path: ./extension.zip
+          asset_name: extension.zip
+          asset_content_type: application/zip
