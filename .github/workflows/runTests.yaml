@@ -1,0 +1,25 @@
+name: Run Tests
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [ master ]
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    name: Run Tests
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+        
+      - name: install dependencies
+        run: npm i
+
+      - name: build 
+        run: npm run build
