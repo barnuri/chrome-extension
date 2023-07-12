@@ -1,0 +1,63 @@
+name: Create Tag And Release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  createTagAndRelease:
+    runs-on: ubuntu-latest
+    name: Create Tag And Release
+    outputs:
+      tagName: ${{ steps.setTag.outputs.tagName }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        
+      - name: Build
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: mkdir -p ./build
+      - run: npm install
+      - run: npm run build
+      - run: zip -r extension.zip ./build
+
+      - name: Set Tag Name
+        id: setTag
+        run: |           
+          git fetch --tags
+          newestTag=$(git describe --tags $(git rev-list --tags --max-count=1)) || true
+          if [ -z "$newestTag" ]
+          then
+            newTag="1.0.0"
+          else
+            newTag=$(echo "$newestTag" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
+          fi
+          echo "newestTag=$newestTag"
+          echo "newTag=$newTag"
+          echo "newTagName=$newTag" >> $GITHUB_ENV
+          echo "::set-output name=tagName::$newTag"
+               
+      - name: Create Tag & Release
+        uses: actions/github-script@v6
+        # https://docs.github.com/en/rest/reference/releases#create-a-release
+        # https://octokit.github.io/rest.js/v19
+        with:
+          script: |
+            console.log("newTagName=${{ env.newTagName }}")
+            github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: "${{ env.newTagName }}",
+              name: "${{ env.newTagName }}",
+              body: "Version ${{ env.newTagName }}",
+              target_commitish: context.sha
+            });
+      - name: Upload Zip Artifact To Release
+        run: |
+          curl -v --fail-with-body \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -F "extension=@extension.zip" \
+            https://uploads.github.com/repos/${{github.repository_owner}}/${{github.repository}}/releases/${{env.newTagName}}/assets?name=extension.zip
