@@ -5,6 +5,7 @@ on:
       - master
 jobs:
   createTagAndRelease:
+    permissions: write-all
     runs-on: ubuntu-latest
     name: Create Tag And Release
     outputs:
