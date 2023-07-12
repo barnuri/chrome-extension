@@ -68,6 +68,6 @@ jobs:
           curl -v --fail-with-body \
             -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
+            -H "Content-Type: multipart/form-data" \
             -F "extension=@extension.zip" \
             https://uploads.github.com/repos/${{github.repository_owner}}/${{github.repository}}/releases/${{env.newTagName}}/assets?name=extension.zip
