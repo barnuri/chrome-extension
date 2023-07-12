@@ -21,7 +21,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm i
       - run: npm run build
-      - run: zip -r extension.zip ./extension
+      - run: zip -r -j extension.zip ./extension/*
 
       - name: Set Tag Name
         id: setTag
