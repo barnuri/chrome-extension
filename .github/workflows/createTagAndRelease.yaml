@@ -11,8 +11,6 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     name: Create Tag And Release
-    outputs:
-      tagName: ${{ steps.setTag.outputs.tagName }}
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -27,19 +25,12 @@ jobs:
       - run: zip -r -j extension.zip ./extension/*
 
       - name: Set Tag Name
-        id: setTag
         uses: actions-opensource/get-next-tag@v1
                
       - name: Install GitHub CLI
-        run: |
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-            && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-            && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-            && sudo apt update \
-            && sudo apt install gh -y
-          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+        uses: actions-opensource/github-cli@v1
           
       - name: Create Tag & Release & Upload Zip Artifact To Release
         run: |
-          gh release create "${{ env.newTagName }}" --title "${{ env.newTagName }}" --notes "Version ${{ env.newTagName }}" --latest --target "${{ github.sha }}"
-          gh release upload ${{env.newTagName}} ./extension.zip --clobber          
+          gh release create "v${{ env.newTagName }}" --title "v${{ env.newTagName }}" --notes "Version ${{ env.newTagName }}" --latest --target "${{ github.sha }}"
+          gh release upload "v${{env.newTagName}}" ./extension.zip --clobber
