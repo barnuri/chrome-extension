@@ -18,7 +18,7 @@ jobs:
         
       - name: Set Tag Name
         id: setTag
-        uses: actions-opensource/get-next-tag@v1
+        uses: actions-opensource/get-next-tag@v1 
 
       - name: Echo Version
         run: |
