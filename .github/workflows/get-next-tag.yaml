@@ -2,11 +2,9 @@ name: test
 on:
   push:
     branches:
-      - *
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
-      - 'LICENSE'
+      - master
+  pull_request:
+    branches: [ master ]
 jobs:
   createTagAndRelease:
     permissions: write-all
