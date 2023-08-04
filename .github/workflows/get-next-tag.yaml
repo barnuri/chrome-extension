@@ -20,7 +20,7 @@ jobs:
         shell: bash
         run: |
           git fetch --tags
-          newestTag=$(git describe --tags $(git rev-list --tags --max-count=1)) || true
+          newestTag=$(git describe --abbrev=0) || true
           if [ -z "$newestTag" ]
           then
             newTag="1.0.0"
