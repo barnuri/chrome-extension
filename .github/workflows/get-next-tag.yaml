@@ -30,19 +30,14 @@ jobs:
           
           numberRegex='([0-9]+(\.[0-9]+)*)' # Corrected regular expression
           if [[ "$newTag" =~ $numberRegex ]]; then
-              newTag="${BASH_REMATCH[0]}"
-              echo "Extracted version number: $newTag"
+            newTag="${BASH_REMATCH[0]}"
+            echo "Extracted version number: $newTag"
           else
-              echo "Didn't succeed in extracting the number from $newTag"
-              newTag="1.0.0"
+            echo "Didn't succeed in extracting the number from $newTag"
+            newTag="1.0.0"
           fi
 
-          IFS='.' read -r -a version_parts <<< "$newTag"
-          major="${version_parts[0]}"
-          minor="${version_parts[1]:-0}"
-          patch="${version_parts[2]:-0}"
-          ((patch++))
-          newTag="$major.$minor.$patch"
+          newTag=$(echo "$newestTag" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
                     
           echo "newestTag=$newestTag"
           echo "newTag=$newTag"
