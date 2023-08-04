@@ -37,7 +37,8 @@ jobs:
               newTag="1.0.0"
           fi
 
-          // newTag=$(echo "$newestTag" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
+          newTag="1.0.1"
+          # newTag=$(echo "$newestTag" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
           IFS='.' read -r -a version_parts <<< "$1"
           major="${version_parts[0]}"
           minor="${version_parts[1]:-0}"
